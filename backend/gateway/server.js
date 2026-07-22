@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import protect from "./middleware/auth.middleware.js";
 import curruser from "./controllers/user.controller.js";
+import { proxyWithHeader } from "./utils/proxyWithHeader.js";
 dotenv.config();
 const PORT = process.env.PORT || 9000;
 const AUTH_SERVICE = process.env.AUTH_SERVICE || "http://localhost:9001";
@@ -31,7 +32,8 @@ app.use(
     },
   }),
 );
-
+app.use("/api/chat", protect, proxyWithHeader(process.env.CHAT_SERVICE));
+app.use("/api/chat", protect, proxy(process.env.AGENT_SERVICE));
 app.get("/", (req, res) => {
   res.json({ message: "Hello World from gateway" });
 });
