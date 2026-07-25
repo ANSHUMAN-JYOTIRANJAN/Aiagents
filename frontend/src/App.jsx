@@ -11,10 +11,13 @@ import { googleProvider, auth } from "./utils/firebase";
 //   withCredentials: true,
 // });
 
-function App() {
+function App()
+{
   const dispatch = useDispatch();
-  useEffect(() => {
-    const getUser = async () => {
+  useEffect(() =>
+  {
+    const getUser = async () =>
+    {
       const data = await currentUser();
       if (data) {
         dispatch(setUserData(data));

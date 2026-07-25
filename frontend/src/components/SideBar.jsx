@@ -1,34 +1,38 @@
 import { useEffect, useState } from "react";
-import {
-  Plus,
-  MessageSquare,
-  Settings,
-  LogOut,
-  User,
-  PenSquare,
-  Menu,
-  X,
-  Coins,
-  ConeIcon,
-  CoinsIcon,
-} from "lucide-react";
+import
+  {
+    Plus,
+    MessageSquare,
+    Settings,
+    LogOut,
+    User,
+    PenSquare,
+    Menu,
+    X,
+    Coins,
+    ConeIcon,
+    CoinsIcon,
+  } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import api from "../utils/axios";
 import { setUserData } from "../redux/user.slice";
-import {
-  createConversation,
-  getConversations,
-} from "../features/conversation.api";
-import {
-  addConversation,
-  setConversations,
-  setSelectedConversation,
-} from "../redux/conversation.slice";
+import
+  {
+    createConversation,
+    getConversations,
+  } from "../features/conversation.api";
+import
+  {
+    addConversation,
+    setConversation,
+    setSelectConversation,
+  } from "../redux/conversationSlice";
 import { getMessages } from "../features/message.api";
-import { setArtifacts, setMessages } from "../redux/message.slice";
-import BillingDrawer from "./BillingDrawer";
+// import { setArtifacts, setMessages } from "../redux/message.slice";
+// import BillingDrawer from "./BillingDrawer";
 
-export default function Sidebar() {
+export default function Sidebar()
+{
   const [hovered, setHovered] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -39,7 +43,8 @@ export default function Sidebar() {
   );
   const dispatch = useDispatch();
   const [showBilling, setShowBilling] = useState(false);
-  const logout = async () => {
+  const logout = async () =>
+  {
     try {
       await api.get("/api/auth/logout");
       dispatch(setUserData(null));
@@ -48,8 +53,10 @@ export default function Sidebar() {
     }
   };
 
-  useEffect(() => {
-    const fetchConversations = async () => {
+  useEffect(() =>
+  {
+    const fetchConversations = async () =>
+    {
       try {
         const data = await getConversations();
         dispatch(setConversations(data));
@@ -60,14 +67,16 @@ export default function Sidebar() {
     fetchConversations();
   }, [userData?._id]);
 
-  const handleCreateConversation = () => {
+  const handleCreateConversation = () =>
+  {
     dispatch(setSelectedConversation(null));
     dispatch(setMessages([]));
     dispatch(setArtifacts([]));
     setMobileOpen(false);
   };
 
-  const handleSelectConversation = async (conversation) => {
+  const handleSelectConversation = async (conversation) =>
+  {
     setMobileOpen(false);
     dispatch(setSelectedConversation(conversation));
     const messages = await getMessages(conversation._id);
@@ -109,7 +118,8 @@ export default function Sidebar() {
       </button>
 
       <div className="flex-1 flex flex-col items-center gap-1 overflow-y-auto w-full px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden mt-1">
-        {conversations.map((chat) => {
+        {conversations.map((chat) =>
+        {
           const isActive = selectedConversation?._id === chat._id;
           return (
             <button
@@ -168,7 +178,7 @@ export default function Sidebar() {
         </button>
 
         <span className="text-[16px] font-semibold text-slate-100 tracking-tight flex-1">
-          CortexAI
+          CodexAI
         </span>
 
         <span className="text-[10px] font-medium text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full tracking-wide">
@@ -208,7 +218,8 @@ export default function Sidebar() {
 
       {/* Chat list */}
       <div className="flex-1 overflow-y-auto px-2.5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {conversations.map((chat) => {
+        {conversations.map((chat) =>
+        {
           const isActive = selectedConversation?._id === chat._id;
           const isHov = hovered === chat._id;
           return (
@@ -218,12 +229,11 @@ export default function Sidebar() {
               onMouseEnter={() => setHovered(chat._id)}
               onMouseLeave={() => setHovered(null)}
               className={`flex items-center gap-2.5 cursor-pointer mb-0.5 px-3 py-2.5 rounded-[10px] border transition-colors duration-150
-                ${
-                  isActive
-                    ? "bg-indigo-500/10 border-indigo-500/[0.18]"
-                    : isHov
-                      ? "bg-white/[0.05] border-transparent"
-                      : "bg-transparent border-transparent"
+                ${isActive
+                  ? "bg-indigo-500/10 border-indigo-500/[0.18]"
+                  : isHov
+                    ? "bg-white/[0.05] border-transparent"
+                    : "bg-transparent border-transparent"
                 }`}
             >
               <div

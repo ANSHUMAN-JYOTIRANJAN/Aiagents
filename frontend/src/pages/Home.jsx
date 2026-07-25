@@ -5,11 +5,14 @@ import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserData } from "../redux/user.slice.js";
-export default function Home() {
+// import Sidebar from "../components/sideBar.jsx";
+export default function Home()
+{
   const { userData } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  const handleLogin = async (token) => {
+  const handleLogin = async (token) =>
+  {
     try {
       const { data } = await api.post("api/auth/login", { token });
       // console.log("Login response:", data);
@@ -19,7 +22,8 @@ export default function Home() {
     }
   };
 
-  const googleLogin = async () => {
+  const googleLogin = async () =>
+  {
     const result = await signInWithPopup(auth, googleProvider);
     const token = await result.user.getIdToken();
     console.log("Firebase token:", token);
@@ -31,6 +35,7 @@ export default function Home() {
   };
   return (
     <div className="h-screen flex bg-[#0d0f14] text-white overflow-hidden">
+      {/* <Sidebar/> */}
       {!userData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="w-[340px] bg-[#13151c] border border-white/[0.08] rounded-2xl p-7 flex flex-col gap-5">
