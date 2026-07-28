@@ -1,6 +1,6 @@
 const curruser = async (req, res) => {
   try {
-    return res.status(200).json(req.user);
+    return res.status(200).json({ user: req.user });
   } catch (error) {
     return res
       .status(500)

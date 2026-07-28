@@ -1,35 +1,30 @@
 import { useEffect, useState } from "react";
 import
-  {
-    Plus,
-    MessageSquare,
-    Settings,
-    LogOut,
-    User,
-    PenSquare,
-    Menu,
-    X,
-    Coins,
-    ConeIcon,
-    CoinsIcon,
-  } from "lucide-react";
+{
+  Plus,
+  MessageSquare,
+  Settings,
+  LogOut,
+  User,
+  PenSquare,
+  Menu,
+  X,
+  Coins,
+  ConeIcon,
+  CoinsIcon,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import api from "../utils/axios";
 import { setUserData } from "../redux/user.slice";
 import
-  {
-    createConversation,
-    getConversations,
-  } from "../features/conversation.api";
-import
-  {
-    addConversation,
-    setConversation,
-    setSelectConversation,
-  } from "../redux/conversationSlice";
+{
+  createConversation,
+  getConversations,
+} from "../features/conversation.api";
+import { addConversation, setConversations, setSelectedConversation } from "../redux/conversation.slice";
 import { getMessages } from "../features/message.api";
-// import { setArtifacts, setMessages } from "../redux/message.slice";
-// import BillingDrawer from "./BillingDrawer";
+import { setArtifacts, setMessages } from "../redux/message.slice";
+import BillingDrawer from "./BillingDrawer";
 
 export default function Sidebar()
 {
@@ -178,7 +173,7 @@ export default function Sidebar()
         </button>
 
         <span className="text-[16px] font-semibold text-slate-100 tracking-tight flex-1">
-          CodexAI
+          CortexAI
         </span>
 
         <span className="text-[10px] font-medium text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full tracking-wide">

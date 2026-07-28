@@ -20,6 +20,7 @@ export default function ChatInput({
     const recognitionRef = useRef(null);
     const dispatch = useDispatch();
     const { selectedConversation } = useSelector(state => state.conversation);
+    const { userData } = useSelector((state) => state.user);
     const { isLoading } = useSelector(state => state.message);
     const fileRef = useRef(null);
 
@@ -33,7 +34,7 @@ export default function ChatInput({
 
     const placeholders = {
 
-        auto: "Ask CortexAI...",
+        auto: "Ask CortxAI...",
 
         chat: "Chat with CortexAI...",
 
@@ -74,13 +75,11 @@ export default function ChatInput({
             icon: FileText,
             label: "PDF"
         },
-
         {
             id: "ppt",
             icon: Presentation,
             label: "PPT"
         },
-
         {
             id: "image",
             icon: ImageIcon,
@@ -170,7 +169,7 @@ export default function ChatInput({
             let conversation = selectedConversation;
 
             if (!conversation) {
-                const newConversation = await createConversation();
+                const newConversation = await createConversation(userData?._id || userData?.id || userData?.userId);
                 dispatch(addConversation(newConversation));
                 dispatch(setSelectedConversation(newConversation));
                 conversation = newConversation;
@@ -184,35 +183,15 @@ export default function ChatInput({
             dispatch(addMessage({ role: "user", content: prompt }));
             setValue("");
 
-            const formData = new FormData();
-
-            formData.append(
-                "conversationId",
-                conversation._id
-            );
-
-            formData.append(
-                "prompt",
-                prompt
-            );
-
-            formData.append(
-                "agent",
-                selectedAgent
-            );
-
-            if (selectedFile) {
-
-                formData.append(
-                    "file",
-                    selectedFile
-                );
-
-            }
+            const payload = {
+                conversationId: conversation._id,
+                prompt,
+                agent: selectedAgent,
+            };
 
             setSelectedFile(null)
 
-            const data = await sendPrompt(formData);
+            const data = await sendPrompt(payload);
             console.log(data)
             dispatch(
                 addMessage({

@@ -25,7 +25,8 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-function Index() {
+function Index()
+{
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50/40 via-background to-background">
       <Navbar />

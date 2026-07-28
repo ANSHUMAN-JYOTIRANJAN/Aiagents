@@ -9,6 +9,8 @@ import { proxyWithHeader } from "./utils/proxyWithHeader.js";
 dotenv.config();
 const PORT = process.env.PORT || 9000;
 const AUTH_SERVICE = process.env.AUTH_SERVICE || "http://localhost:9001";
+const CHAT_SERVICE = process.env.CHAT_SERVICE || "http://localhost:9002";
+const AGENT_SERVICE = process.env.AGENT_SERVICE || "http://localhost:9003";
 
 const app = express();
 
@@ -32,8 +34,8 @@ app.use(
     },
   }),
 );
-app.use("/api/chat", protect, proxyWithHeader(process.env.CHAT_SERVICE));
-app.use("/api/chat", protect, proxy(process.env.AGENT_SERVICE));
+app.use("/api/chat", protect, proxyWithHeader(CHAT_SERVICE));
+app.use("/api/agent", protect, proxyWithHeader(AGENT_SERVICE));
 app.get("/", (req, res) => {
   res.json({ message: "Hello World from gateway" });
 });

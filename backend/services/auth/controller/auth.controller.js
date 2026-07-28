@@ -33,10 +33,10 @@ export const login = async (req, res) => {
     res.cookie("session", sessionid, {
       httpOnly: true,
       sameSite: "lax",
-       secure: false,
+      secure: false,
       maxAge: 7 * 24 * 3600 * 1000,
     });
-    return res.status(200).json(user);
+    return res.status(200).json({ user });
   } catch (error) {
     return res.status(500).json({ message: `login error ${error}` });
   }

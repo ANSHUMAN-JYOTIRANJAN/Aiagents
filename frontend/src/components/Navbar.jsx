@@ -1,12 +1,14 @@
-import React from 'react'
-import { MessageCircle, Share2, MoreHorizontal, Zap, ChartBar, MessageSquare } from 'lucide-react'
-import { useSelector } from 'react-redux'
-export default function Nav()
+import { Share2, MoreHorizontal, Zap, ChartBar, MessageCircle, MessageSquare } from "lucide-react";
+import { useSelector } from "react-redux";
+
+export default function Navbar()
 {
-  const { selectedConversation } = useSelector(state => state.conversation)
-  const { message } = useSelector(state => state.message)
+  const { conversations, selectedConversation } = useSelector(state => state.conversation);
+  const { messages } = useSelector(state => state.message);
   return (
     <div className="h-14 flex items-center justify-between px-5 border-b border-white/[0.06] bg-[#0d0f14]">
+
+      {/* Left — chat title */}
       <div className="flex items-center gap-2.5">
         <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
           <MessageSquare size={13} className="text-indigo-400" />
@@ -18,6 +20,10 @@ export default function Nav()
           {messages.length} Messages
         </span>
       </div>
+
+      {/* Right — actions */}
+
+
     </div>
-  )
+  );
 }

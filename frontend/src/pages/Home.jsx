@@ -1,41 +1,43 @@
-import React from "react";
-import api from "../utils/axios.js";
-import { auth, googleProvider } from "../utils/firebase.js";
-import { FcGoogle } from "react-icons/fc";
-import { signInWithPopup } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserData } from "../redux/user.slice.js";
-// import Sidebar from "../components/sideBar.jsx";
-export default function Home()
+import { FaGoogle } from "react-icons/fa";
+// import ArtifactPanel from "../components/ArtifactPanel";
+// import ChatArea from "../components/ChatArea";
+// import Sidebar from "../components/Sidebar";
+import ArtifactPanel from "../components/ArtifactPannel";
+import ChatArea from "../components/chatArea";
+import Sidebar from "../components/sideBar";
+import api from "../utils/axios";
+import { setUserData } from "../redux/user.slice";
+import { signInWithPopup } from "firebase/auth";
+// import { auth, googleProvider } from "../../firebase";
+import { auth, googleProvider } from "../utils/firebase.js"
+function Home()
 {
   const { userData } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-
-  const handleLogin = async (token) =>
+  const login = async (token) =>
   {
     try {
-      const { data } = await api.post("api/auth/login", { token });
-      // console.log("Login response:", data);
-      dispatch(setUserData(data));
+      const { data } = await api.post(`/api/auth/login`, { token });
+      dispatch(setUserData(data?.user ?? data));
     } catch (error) {
-      console.error("Login request failed:", error);
+      console.log(error);
     }
   };
-
-  const googleLogin = async () =>
+  const handleGoogleLogin = async () =>
   {
     const result = await signInWithPopup(auth, googleProvider);
-    const token = await result.user.getIdToken();
-    console.log("Firebase token:", token);
-    await handleLogin(token);
-    // console.log("Firebase user:", result.user);
 
-    // console.error("Google login failed:", error);
-    console.log(result);
+    const token = await result.user.getIdToken();
+    await login(token);
   };
+
   return (
     <div className="h-screen flex bg-[#0d0f14] text-white overflow-hidden">
-      {/* <Sidebar/> */}
+      <Sidebar />
+      <ChatArea />
+      <ArtifactPanel />
+
       {!userData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="w-[340px] bg-[#13151c] border border-white/[0.08] rounded-2xl p-7 flex flex-col gap-5">
@@ -47,17 +49,19 @@ export default function Home()
                 Please login to continue using the app.
               </p>
             </div>
-            <div>
-              <button
-                onClick={googleLogin}
-                className="w-full flex items-center justify-center gap-3 py-[11px] rounded-xl text-sm font-medium text-black/90 bg-white hover:bg-gray-200  transition-all duration-150 cursor-pointer "
-              >
-                <FcGoogle size={15} /> Continue with Google
-              </button>
-            </div>
+
+            <button
+              onClick={handleGoogleLogin}
+              className="w-full flex items-center justify-center gap-3 py-[11px] rounded-xl text-sm font-medium text-white bg-gradient-to-br from-indigo-500 to-violet-700 hover:from-indigo-400 hover:to-violet-600 active:from-indigo-600 active:to-violet-800 border border-indigo-500/30 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transition-all duration-150 cursor-pointer"
+            >
+              <FaGoogle size={15} className="text-white" />
+              Continue with Google
+            </button>
           </div>
         </div>
       )}
     </div>
   );
 }
+
+export default Home;
