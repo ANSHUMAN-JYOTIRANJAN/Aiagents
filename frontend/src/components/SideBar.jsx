@@ -153,13 +153,14 @@ export default function Sidebar()
 
   /* ── Full sidebar content ── */
   const SidebarContent = () => (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative z-10">
+      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-indigo-500/15 via-transparent to-transparent" />
       {/* Header */}
-      <div className="flex items-center gap-2.5 px-4 py-4 border-b border-white/[0.06]">
+      <div className="relative flex items-center gap-2.5 px-4 py-4 border-b border-white/[0.08] bg-white/5 backdrop-blur-sm">
         {/* Desktop collapse */}
         <button
           onClick={() => setCollapsed(true)}
-          className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer"
+          className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] transition-colors duration-150 border border-white/[0.08] bg-white/5 cursor-pointer"
         >
           <PanelIcon />
         </button>
@@ -192,22 +193,16 @@ export default function Sidebar()
       <div className="px-4 pt-4 pb-1">
         <button
           onClick={handleCreateConversation}
-          className="w-full flex items-center justify-center gap-2 text-sm font-medium text-white bg-gradient-to-br from-indigo-500 to-violet-700 rounded-xl py-[10px] border-none cursor-pointer hover:opacity-90 transition-opacity duration-150"
+          className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-white bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl py-[11px] border border-cyan-400/20 shadow-lg shadow-cyan-500/10 cursor-pointer hover:opacity-95 transition duration-150"
         >
           <Plus size={15} />
           New Chat
         </button>
       </div>
 
-      {conversations.length == 0 ? (
-        <div className="px-5 pt-4 pb-1.5 text-[10.5px] font-semibold uppercase tracking-widest text-slate-600">
-          No recent conversations
-        </div>
-      ) : (
-        <p className="px-5 pt-4 pb-1.5 text-[10.5px] font-semibold uppercase tracking-widest text-slate-600">
-          Recents
-        </p>
-      )}
+      <div className="px-5 pt-4 pb-1.5 text-[10.5px] font-semibold uppercase tracking-widest text-slate-500">
+        {conversations.length === 0 ? "No recent conversations" : "Recents"}
+      </div>
 
       {/* Section label */}
 
@@ -223,19 +218,19 @@ export default function Sidebar()
               onClick={() => handleSelectConversation(chat)}
               onMouseEnter={() => setHovered(chat._id)}
               onMouseLeave={() => setHovered(null)}
-              className={`flex items-center gap-2.5 cursor-pointer mb-0.5 px-3 py-2.5 rounded-[10px] border transition-colors duration-150
+              className={`flex items-center gap-2.5 cursor-pointer mb-2 px-3 py-3 rounded-3xl border transition-all duration-200
                 ${isActive
-                  ? "bg-indigo-500/10 border-indigo-500/[0.18]"
+                  ? "bg-white/10 border-white/15 shadow-[0_10px_30px_-18px_rgba(99,102,241,0.65)]"
                   : isHov
-                    ? "bg-white/[0.05] border-transparent"
-                    : "bg-transparent border-transparent"
+                    ? "bg-white/5 border-white/10"
+                    : "bg-white/2 border-transparent"
                 }`}
             >
               <div
-                className={`flex items-center justify-center shrink-0 w-[28px] h-[28px] rounded-lg transition-colors duration-150
-                ${isActive ? "bg-indigo-500/15 text-indigo-400" : "bg-white/[0.05] text-slate-500"}`}
+                className={`flex items-center justify-center shrink-0 w-[30px] h-[30px] rounded-2xl transition-colors duration-200
+                ${isActive ? "bg-cyan-500/15 text-cyan-300" : "bg-white/[0.06] text-slate-400"}`}
               >
-                <MessageSquare size={13} />
+                <MessageSquare size={14} />
               </div>
               <p
                 className={`text-[13px] font-medium truncate ${isActive ? "text-slate-100" : "text-slate-300"}`}
@@ -328,12 +323,17 @@ export default function Sidebar()
         className={`
         fixed lg:static inset-y-0 left-0 z-50
         w-[270px] h-screen shrink-0
-        bg-[#0d0f14] border-r border-white/[0.06]
+        bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.16),_transparent_38%),linear-gradient(180deg,#050816_0%,#0d0f14_100%)]
+        border-r border-white/[0.08]
+        shadow-[0_0_60px_rgba(0,0,0,0.28)]
         transition-transform duration-250
         ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}
       >
-        <SidebarContent />
+        <div className="relative h-full overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(79,70,229,0.18),_transparent_30%),radial-gradient(circle_at_top_left,_rgba(56,189,248,0.12),_transparent_35%)]" />
+          <SidebarContent />
+        </div>
       </div>
 
       <BillingDrawer open={showBilling} onClose={() => setShowBilling(false)} />

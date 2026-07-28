@@ -30,14 +30,17 @@ User Query:
 ${state.prompt}
 `;
     const res = await llm.invoke(prompt);
-    const responseText = typeof res?.content === "string"
-      ? res.content
-      : String(res?.content ?? "chat");
+    const responseText =
+      typeof res?.content === "string"
+        ? res.content
+        : String(res?.content ?? "chat");
 
     const normalizedAgent = responseText.trim().toLowerCase();
     return {
       ...state,
-      agent: ["chat", "search", "coding", "ppt", "pdf", "imageGen"].includes(normalizedAgent)
+      agent: ["chat", "search", "coding", "ppt", "pdf", "imageGen"].includes(
+        normalizedAgent,
+      )
         ? normalizedAgent
         : "chat",
     };

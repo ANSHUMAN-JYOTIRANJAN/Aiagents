@@ -10,9 +10,38 @@ export const chatAgent = async (params) => {
   try {
     const llm = await getModel("chat");
     const state = params;
-    const systemPrompt = "you are intelligent ai assistance";
+
     const history = await getMemory(state.conversationId);
-    const messages = [new SystemMessage(systemPrompt)];
+    const searchContext = state.searchresults
+      ? `web Seach Results: ${state.searchresults} Answer the user using the above search results.`
+      : "";
+
+    const messages = [
+      new SystemMessage(`You are CodexAI, an intelligent AI assistant. ${searchContext}
+      If searchContext exists:
+
+- Use search results to answer.
+- Do not mention internal tools.
+
+Rules:
+
+- For simple questions, greetings, and short queries, respond naturally in plain text.
+- For technical, educational, coding, or detailed topics, use clean Markdown.
+
+Formatting:
+
+- Use # for titles and ## for sections.
+- Leave a blank line after headings.
+- Use bullet points for lists.
+- Use numbered lists for steps.
+- Use fenced code blocks with language tags for code.
+- Keep paragraphs short and readable.
+- Never write headings and content on the same line.
+- Never generate large walls of text.
+
+`,
+),
+    ];
 
     if (Array.isArray(history)) {
       history.forEach((msg) => {
@@ -41,7 +70,10 @@ export const chatAgent = async (params) => {
 
     return {
       ...state,
-      aiResponse: typeof response?.content === "string" ? response.content : String(response ?? ""),
+      aiResponse:
+        typeof response?.content === "string"
+          ? response.content
+          : String(response ?? ""),
     };
   } catch (error) {
     console.error("chatAgent error", error);

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import AIBanner from "./AiBanner";
 import ChatInput from "./ChatInput";
-import MessageBubble from "./MessageBubble";
 import MessageList from "./MessageList";
 import Navbar from "./Navbar";
 
@@ -13,10 +12,15 @@ function ChatArea()
         title: "",
         message: ""
     });
-    return (
-        <div className="flex-1 flex flex-col min-w-0">
+    const [chatBg, setChatBg] = useState("#0d0f14");
 
-            <Navbar />
+    return (
+        <div className="flex-1 flex flex-col min-w-0" style={{ background: chatBg }}>
+
+            <Navbar
+                chatBg={chatBg}
+                setChatBg={setChatBg}
+            />
 
             <MessageList />
             <AIBanner
