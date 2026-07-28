@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import { FiExternalLink, FiX } from "react-icons/fi";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -54,6 +55,8 @@ function MessageBubble({ role, content, images })
                     </div>
                 )}<ReactMarkdown
                     remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
+                    skipHtml={false}
                     components={{
                         h1: ({ children }) => (
                             <h1 className="text-2xl font-bold mt-5 mb-3">{children}</h1>
@@ -131,6 +134,7 @@ function MessageBubble({ role, content, images })
                                 />
                             );
                         },
+                        
 
                         code({ className, children })
                         {

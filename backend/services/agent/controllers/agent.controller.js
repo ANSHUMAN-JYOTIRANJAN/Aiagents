@@ -1,7 +1,7 @@
 import axios from "axios";
 import { graph } from "../graph/graph.js";
 import { addMessage } from "../config/memory.js";
-
+import redis from "../../../shared/redis/redis.js";
 const getChatServiceUrl = () =>
   process.env.CHAT_SERVICE || "http://localhost:9002";
 
@@ -48,6 +48,7 @@ export const agent = async (req, res) => {
         conversationId,
         role: "assistant",
         content: response,
+        images: result.images || [],
       })
       .catch((error) => {
         console.error(
@@ -58,9 +59,11 @@ export const agent = async (req, res) => {
         );
       });
 
-    return res
-      .status(200)
-      .json({ answer: response, images: [], artifacts: [] });
+    return res.status(200).json({
+      answer: response,
+      images: result.images || [],
+      artifacts: result.artifacts || [],
+    });
   } catch (error) {
     console.error("agent controller error", error);
     return res.status(500).json({ message: error.message || "agent error" });

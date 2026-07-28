@@ -1,1 +1,6 @@
-export const imageGenAgent = async (params) => {};
+export const imageGenAgent = async (params) => {
+  return {
+    ...params,
+    images: params.images || [],
+  };
+};

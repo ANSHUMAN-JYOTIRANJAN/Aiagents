@@ -39,8 +39,7 @@ Formatting:
 - Never write headings and content on the same line.
 - Never generate large walls of text.
 
-`,
-),
+`),
     ];
 
     if (Array.isArray(history)) {
@@ -56,17 +55,7 @@ Formatting:
     }
 
     messages.push(new HumanMessage(state.prompt));
-
-    const response = await llm.invoke([
-      {
-        role: "system",
-        content: systemPrompt,
-      },
-      {
-        role: "human",
-        content: state.prompt,
-      },
-    ]);
+    const response = await llm.invoke(messages);
 
     return {
       ...state,

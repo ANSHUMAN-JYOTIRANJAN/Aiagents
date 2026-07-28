@@ -3,7 +3,13 @@ import message from "../models/message.model.js";
 
 export const createConversation = async (req, res) => {
   try {
-    const userId = req.user?.userId || req.user?._id || req.user?.id || req.body?.userId || req.headers["x-user-id"] || req.headers["x-userid"];
+    const userId =
+      req.user?.userId ||
+      req.user?._id ||
+      req.user?.id ||
+      req.body?.userId ||
+      req.headers["x-user-id"] ||
+      req.headers["x-userid"];
     if (!userId) {
       return res.status(400).json({ message: "userId is required" });
     }
@@ -21,7 +27,13 @@ export const createConversation = async (req, res) => {
 
 export const getConversation = async (req, res) => {
   try {
-    const userId = req.user?.userId || req.user?._id || req.user?.id || req.body?.userId || req.headers["x-user-id"] || req.headers["x-userid"];
+    const userId =
+      req.user?.userId ||
+      req.user?._id ||
+      req.user?.id ||
+      req.body?.userId ||
+      req.headers["x-user-id"] ||
+      req.headers["x-userid"];
     const conversation = await Conversation.find({
       userId,
     }).sort({ updatedAt: -1 });
@@ -37,9 +49,12 @@ export const updateConversation = async (req, res) => {
   try {
     const { conversationId, id, title } = req.body;
     const targetConversationId = conversationId || id;
-    const conversation = await Conversation.findByIdAndUpdate(targetConversationId, {
-      title,
-    });
+    const conversation = await Conversation.findByIdAndUpdate(
+      targetConversationId,
+      {
+        title,
+      },
+    );
     return res.status(200).json(conversation);
   } catch (error) {
     return res
@@ -50,11 +65,12 @@ export const updateConversation = async (req, res) => {
 
 export const saveConversation = async (req, res) => {
   try {
-    const { conversationId, role, content } = req.body;
+    const { conversationId, role, content, images } = req.body;
     const Message = await message.create({
       conversationId,
       role,
       content,
+      images,
     });
     return res.status(200).json(Message);
   } catch (error) {
