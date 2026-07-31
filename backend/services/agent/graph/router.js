@@ -13,7 +13,7 @@ If searchContext exists:
 - Do not mention internal tools.
 
 Rules:
-- For simple questions, greetings, and short queries, respond naturally in plain text.
+- For +simple questions, greetings, and short queries, respond naturally in plain text.
 - For technical, educational, coding, or detailed topics, use clean Markdown.
 
 Formatting:

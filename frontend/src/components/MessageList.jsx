@@ -1,5 +1,4 @@
 import MessageBubble from "./MessageBubble";
-
 import { useDispatch, useSelector } from "react-redux";
 import { getMessages } from "../features/message.api";
 import { setArtifacts, setMessages } from "../redux/message.slice";
