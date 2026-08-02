@@ -41,7 +41,7 @@ function MessageBubble({ role, content, images })
                     }`}
             >
                 {images.length > 0 && (
-                    <div className="flex flex-wrap gap-3 mt-4">
+                    <div className="flex flex-wrap gap-3 my-3">
                         {images.map((img, i) => (
                             <img
                                 key={i}
@@ -49,7 +49,7 @@ function MessageBubble({ role, content, images })
                                 loading="lazy"
                                 onClick={() => setLightboxSrc(img)}
                                 onError={(e) => e.currentTarget.remove()}
-                                className="w-40 h-28 rounded-xl object-cover border border-white/10 cursor-zoom-in hover:opacity-90 transition"
+                                className="max-w-md w-full max-h-96 rounded-2xl object-cover border border-white/10 cursor-zoom-in hover:opacity-95 transition shadow-xl"
                             />
                         ))}
                     </div>
@@ -134,7 +134,7 @@ function MessageBubble({ role, content, images })
                                 />
                             );
                         },
-                        
+
 
                         code({ className, children })
                         {

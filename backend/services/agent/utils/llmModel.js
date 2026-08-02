@@ -10,7 +10,7 @@ const createGroqModel = () => {
   }
   return new ChatGroq({
     apiKey: process.env.GROQ_API_KEY,
-    model: "openai/gpt-oss-120b",
+    model: "llama-3.3-70b-versatile",
   });
 };
 
@@ -20,20 +20,20 @@ const createGeminiModel = () => {
   }
   return new ChatGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_API_KEY,
-    model: "gemini-2.5-flash",
+    model: "gemini-1.5-flash",
   });
 };
 
 const createopenRouter = () => {
   if (process.env.OPENROUTER_API_KEY) {
-    throw new Error("OPENROUTER_API_KEY is not configured");
+    return new ChatOpenRouter({
+      apiKey: process.env.OPENROUTER_API_KEY,
+      model: "deepseek/deepseek-chat",
+      temperature: 0,
+      maxTokens: 2500,
+    });
   }
-  return new ChatOpenRouter({
-    apiKey: process.env.OPENROUTER_API_KEY,
-    model: "deepseek/deepseek-chat",
-    temperature: 0,
-    maxTokens: 2500,
-  });
+  return createGroqModel();
 };
 
 export const getModel = async (agent) => {
@@ -44,6 +44,8 @@ export const getModel = async (agent) => {
       return createGroqModel();
     case "coding":
       return createopenRouter();
+    case "image":
+      return createGroqModel();
     default:
       return createGroqModel();
   }

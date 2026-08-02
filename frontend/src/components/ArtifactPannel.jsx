@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Editor from "@monaco-editor/react";
 import { FiCode } from "react-icons/fi";
@@ -15,11 +15,29 @@ export default function ArtifactPanel()
   const [copied, setCopied] = useState(false);
 
   const { artifacts } = useSelector(state => state.message);
-  const artifact = artifacts?.[0];
+  const artifact =
+    artifacts && artifacts.length > 0
+      ? artifacts[artifacts.length - 1]
+      : null;
+  useEffect(() =>
+  {
+    if (!artifact) return;
 
+    setActiveFile(0);
+    setTab("code");
+  }, [artifact]);
   if (!artifact) return null;
 
-  const file = artifact?.files?.[activeFile];
+
+
+  const files = artifact?.files || [];
+
+  const file =
+    files[activeFile] ||
+    files[0] || {
+      name: "",
+      content: "",
+    };
   const htmlFile = artifact?.files?.find(f => f.name === "index.html");
   const cssFile = artifact?.files?.find(f => f.name === "style.css");
   const jsFile = artifact?.files?.find(f => f.name === "script.js");

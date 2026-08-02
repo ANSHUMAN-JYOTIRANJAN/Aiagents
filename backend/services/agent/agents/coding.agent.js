@@ -1,4 +1,4 @@
-import { getModel } from "../config/llmModel";
+import { getModel } from "../utils/llmModel.js";
 export const codingAgent = async (params) => {
   function cleanCode(code = "") {
     return code
@@ -7,6 +7,8 @@ export const codingAgent = async (params) => {
       .trim();
   }
 
+  const state = params || {};
+  const promptText = typeof state.prompt === "string" ? state.prompt : "";
   const llm = getModel("coding");
 
   const response = await llm.invoke(`You are CortexAI Coding Agent.
@@ -224,7 +226,7 @@ Generate only what is required.
 
 User Request:
 
-${state.prompt}`);
+${promptText}`);
 
   const content = response.content?.trim();
   console.log(content);
@@ -246,7 +248,7 @@ ${state.prompt}`);
   } else {
     let fileName = "main.js";
 
-    const prompt = state.prompt.toLowerCase();
+    const prompt = promptText.toLowerCase();
 
     if (prompt.includes("html")) {
       fileName = "index.html";
@@ -273,14 +275,13 @@ ${state.prompt}`);
 
   return {
     ...state,
-
+    aiResponse: "Code generated successfully.",
     response: "Code generated successfully.",
-
     artifacts: [
       {
         id: Date.now(),
         type: "project",
-        title: state.prompt,
+        title: promptText,
         files,
         createdAt: new Date().toISOString(),
       },

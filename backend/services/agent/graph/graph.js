@@ -1,6 +1,6 @@
 import { StateGraph } from "@langchain/langgraph";
 import { agentState } from "./state.js";
-import { router } from "./router.js";
+import { routerNode } from "./router.Node.js";
 import { chatAgent } from "../agents/chat.agent.js";
 import { searchAgent } from "../agents/search.agent.js";
 import { codingAgent } from "../agents/coding.agent.js";
@@ -9,7 +9,7 @@ import { pdfAgent } from "../agents/pdf.agent.js";
 import { imageGenAgent } from "../agents/imageGen.agent.js";
 
 const workflow = new StateGraph(agentState);
-workflow.addNode("router", router);
+workflow.addNode("router", routerNode);
 workflow.addNode("chat", chatAgent);
 workflow.addNode("search", searchAgent);
 workflow.addNode("coding", codingAgent);
@@ -30,8 +30,7 @@ workflow.addConditionalEdges(
         return "coding";
       case "ppt":
         return "ppt";
-      case "pdf":
-        return "pdf";
+      case "image":
       case "imageGen":
         return "imageGen";
       default:

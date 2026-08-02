@@ -14,7 +14,10 @@ export const updateConversations = async (conversationId, title) => {
 };
 
 export const createConversation = async (userId) => {
-  const response = await api.post("/api/chat/create-conversation", userId ? { userId } : {});
+  const response = await api.post(
+    "/api/chat/create-conversation",
+    userId ? { userId } : {},
+  );
 
   return response.data;
 };

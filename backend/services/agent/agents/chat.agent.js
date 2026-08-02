@@ -3,8 +3,8 @@ import {
   HumanMessage,
   SystemMessage,
 } from "@langchain/core/messages";
-import { getModel } from "../config/llmModel.js";
-import { getMemory } from "../config/memory.js";
+import { getModel } from "../utils/llmModel.js";
+import { getMemory } from "../utils/memory.js";
 
 export const chatAgent = async (params) => {
   try {

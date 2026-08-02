@@ -1,13 +1,13 @@
 import axios from "axios";
 import { graph } from "../graph/graph.js";
-import { addMessage } from "../config/memory.js";
+import { addMessage } from "../utils/memory.js";
 import redis from "../../../shared/redis/redis.js";
 const getChatServiceUrl = () =>
   process.env.CHAT_SERVICE || "http://localhost:9002";
 
 export const agent = async (req, res) => {
   try {
-    const { prompt, conversationId } = req.body || {};
+    const { prompt, conversationId, agent } = req.body || {};
     const promptText = typeof prompt === "string" ? prompt : "";
 
     if (!promptText || !conversationId) {
@@ -17,7 +17,12 @@ export const agent = async (req, res) => {
     }
 
     const chatServiceUrl = getChatServiceUrl();
-    await addMessage(conversationId, "user", promptText);
+    try {
+      await addMessage(conversationId, "user", promptText);
+    } catch (memErr) {
+      console.warn("addMessage user memory warning:", memErr.message);
+    }
+
     await axios
       .post(`${chatServiceUrl}/save-converse`, {
         conversationId,
@@ -36,19 +41,41 @@ export const agent = async (req, res) => {
     const result = await graph.invoke({
       prompt: promptText,
       conversationId,
+      userId: req.headers["x-user-id"],
+      agent,
+      file: req.file,
     });
+
+    console.log("========== GRAPH RESULT ==========");
+    console.dir(result, { depth: null });
+    console.log("Artifacts:", result.artifacts);
+    console.log("Images:", result.images);
+    console.log("==================================");
+
     const response =
       typeof result?.aiResponse === "string"
         ? result.aiResponse
-        : result?.aiResponse?.content || "No response generated";
+        : typeof result?.response === "string"
+          ? result.response
+          : result?.aiResponse?.content ||
+            result?.response?.content ||
+            "No response generated";
 
-    await addMessage(conversationId, "assistant", response);
+    const artifacts = Array.isArray(result?.artifacts) ? result.artifacts : [];
+    const images = Array.isArray(result?.images) ? result.images : [];
+
+    try {
+      await addMessage(conversationId, "assistant", response);
+    } catch (memErr) {
+      console.warn("addMessage assistant memory warning:", memErr.message);
+    }
     await axios
       .post(`${chatServiceUrl}/save-message`, {
         conversationId,
         role: "assistant",
         content: response,
-        images: result.images || [],
+        images,
+        artifacts,
       })
       .catch((error) => {
         console.error(
@@ -61,8 +88,8 @@ export const agent = async (req, res) => {
 
     return res.status(200).json({
       answer: response,
-      images: result.images || [],
-      artifacts: result.artifacts || [],
+      images,
+      artifacts,
     });
   } catch (error) {
     console.error("agent controller error", error);

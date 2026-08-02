@@ -65,12 +65,13 @@ export const updateConversation = async (req, res) => {
 
 export const saveConversation = async (req, res) => {
   try {
-    const { conversationId, role, content, images } = req.body;
+    const { conversationId, role, content, images, artifacts } = req.body;
     const Message = await message.create({
       conversationId,
       role,
       content,
       images,
+      artifacts: artifacts || [],
     });
     return res.status(200).json(Message);
   } catch (error) {
