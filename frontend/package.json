@@ -19,6 +19,7 @@
     "framer-motion": "^12.42.2",
     "install": "^0.13.0",
     "lucide-react": "^1.26.0",
+    "pdf-parse": "^2.4.5",
     "react": "^19.2.7",
     "react-colorful": "^5.8.0",
     "react-dom": "^19.2.7",

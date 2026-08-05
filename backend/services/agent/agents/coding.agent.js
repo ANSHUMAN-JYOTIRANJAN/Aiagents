@@ -7,11 +7,12 @@ export const codingAgent = async (params) => {
       .trim();
   }
 
-  const state = params || {};
-  const promptText = typeof state.prompt === "string" ? state.prompt : "";
-  const llm = getModel("coding");
+  try {
+    const state = params || {};
+    const promptText = typeof state.prompt === "string" ? state.prompt : "";
+    const llm = await getModel("coding");
 
-  const response = await llm.invoke(`You are CortexAI Coding Agent.
+    const response = await llm.invoke(`You are CortexAI Coding Agent.
 
 Your first task is to identify the user's intent.
 
@@ -52,15 +53,10 @@ Include:
 # Overview
 
 ## What this code does
-
 ## Problems
-
 ## Improvements
-
 ## Best Practices
-
 ## Optimized snippets (if required)
-
 For explanations:
 
 - Never wrap variable names in triple backticks.
@@ -228,63 +224,72 @@ User Request:
 
 ${promptText}`);
 
-  const content = response.content?.trim();
-  console.log(content);
-  const files = [];
+    const content = response.content?.trim() || "";
+    console.log(content);
+    const files = [];
 
-  const matches = [
-    ...content.matchAll(
-      /FILE:\s*([^\n]+)\n([\s\S]*?)(?=\nFILE:\s*[^\n]+\n|$)/g,
-    ),
-  ];
+    const matches = [
+      ...content.matchAll(
+        /FILE:\s*([^\n]+)\n([\s\S]*?)(?=\nFILE:\s*[^\n]+\n|$)/g,
+      ),
+    ];
 
-  if (matches.length) {
-    matches.forEach((match) => {
-      files.push({
-        name: match[1].trim(),
-        content: cleanCode(match[2]),
+    if (matches.length) {
+      matches.forEach((match) => {
+        files.push({
+          name: match[1].trim(),
+          content: cleanCode(match[2]),
+        });
       });
-    });
-  } else {
-    let fileName = "main.js";
+    } else {
+      let fileName = "main.js";
 
-    const prompt = promptText.toLowerCase();
+      const prompt = promptText.toLowerCase();
 
-    if (prompt.includes("html")) {
-      fileName = "index.html";
-    } else if (prompt.includes("css")) {
-      fileName = "style.css";
-    } else if (prompt.includes("javaScript")) {
-      fileName = "server.js";
-    } else if (prompt.includes("python")) {
-      fileName = "main.py";
-    } else if (prompt.includes("java")) {
-      fileName = "Main.java";
-    } else if (prompt.includes("c++")) {
-      fileName = "main.cpp";
+      if (prompt.includes("html")) {
+        fileName = "index.html";
+      } else if (prompt.includes("css")) {
+        fileName = "style.css";
+      } else if (prompt.includes("javaScript")) {
+        fileName = "server.js";
+      } else if (prompt.includes("python")) {
+        fileName = "main.py";
+      } else if (prompt.includes("java")) {
+        fileName = "Main.java";
+      } else if (prompt.includes("c++")) {
+        fileName = "main.cpp";
+      }
     }
-  }
 
-  if (!content.includes("FILE:")) {
+    if (!content.includes("FILE:")) {
+      return {
+        ...state,
+        response: content,
+        artifacts: [],
+      };
+    }
+
     return {
       ...state,
-      response: content,
+      aiResponse: "Code generated successfully.",
+      response: "Code generated successfully.",
+      artifacts: [
+        {
+          id: Date.now(),
+          type: "project",
+          title: promptText,
+          files,
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    };
+  } catch (error) {
+    console.error("codingAgent error", error);
+    return {
+      ...(params || {}),
+      aiResponse: error.message || "AI generation failed",
+      response: error.message || "AI generation failed",
       artifacts: [],
     };
   }
-
-  return {
-    ...state,
-    aiResponse: "Code generated successfully.",
-    response: "Code generated successfully.",
-    artifacts: [
-      {
-        id: Date.now(),
-        type: "project",
-        title: promptText,
-        files,
-        createdAt: new Date().toISOString(),
-      },
-    ],
-  };
 };
