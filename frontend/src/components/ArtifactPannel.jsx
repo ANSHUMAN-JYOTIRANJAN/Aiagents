@@ -22,7 +22,6 @@ export default function ArtifactPanel()
   useEffect(() =>
   {
     if (!artifact) return;
-
     setActiveFile(0);
     setTab("code");
   }, [artifact]);

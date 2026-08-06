@@ -358,9 +358,9 @@ function parseResponse(content) {
   return result;
 }
 
-export const pptAgent = async (states) => {
+export const pptAgent = async (state) => {
   try {
-    const llm = getModel("ppt");
+    const llm = await getModel("ppt");
 
     const aiResponse = await llm.invoke(`
 Create a professional PowerPoint presentation on the topic below.
