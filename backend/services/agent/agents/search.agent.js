@@ -1,21 +1,32 @@
-import { Query } from "mongoose";
+// import { checkAgentLimit } from "../config/agentRateLimit.js";
+import { deductCredits } from "../utils/deductCredit.js";
 import { searchTool } from "../utils/tavily.js";
+
 export const searchAgent = async (state) => {
+  // await checkAgentLimit(state.userId, "search");
+  await deductCredits(
+    state.userId,
+
+    "search",
+  );
   try {
     const results = await searchTool.invoke({
-      Query: state.prompt,
+      query: state.prompt,
     });
     console.log(results);
+
     return {
       ...state,
+
       searchResults: results,
-      images: results.images || [],
     };
   } catch (error) {
+    console.log(error);
+
     return {
       ...state,
-      searchAgent: [],
-      images: [],
+
+      searchResults: [],
     };
   }
 };

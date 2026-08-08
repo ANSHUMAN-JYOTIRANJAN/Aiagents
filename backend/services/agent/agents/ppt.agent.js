@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { getModel } from "../utils/llmModel.js";
 import { uploadToS3 } from "../utils/uploadToS3.js";
+import { deductCredits } from "../utils/deductCredit.js";
 import { getDownloadUrl } from "../utils/getDownloadUrl.js";
 import { title } from "process";
 const THEME = {
@@ -360,6 +361,7 @@ function parseResponse(content) {
 
 export const pptAgent = async (state) => {
   try {
+    await deductCredits(state.userId, "ppt");
     const llm = await getModel("ppt");
 
     const aiResponse = await llm.invoke(`

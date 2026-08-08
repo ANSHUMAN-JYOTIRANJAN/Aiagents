@@ -1,4 +1,3 @@
-import React from "react";
 import { useEffect } from "react";
 import api from '../utils/axios.js';
 import { useDispatch } from "react-redux";
@@ -13,13 +12,17 @@ function useCurrentUser()
         {
             try {
                 const { data } = await api.get("/api/me")
-                dispatch(setUserData(data?.user ?? data))
+                dispatch(
+                    setUserData({
+                        ...data.user,
+                        _id: data.user._id || data.user.userId,
+                    }),
+                )
             } catch (error) {
                 console.log(error)
-
             }
         }
         get()
     }, [])
 }
-export default useCurrentUser
+export default useCurrentUser;

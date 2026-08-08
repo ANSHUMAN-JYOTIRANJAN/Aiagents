@@ -16,7 +16,9 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-http-proxy": "^2.1.2",
+    "helmet": "^8.3.0",
     "morgan": "^1.11.0",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "proxy": "^4.1.0"
   }
 }

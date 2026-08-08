@@ -183,15 +183,20 @@ export default function ChatInput({
             dispatch(addMessage({ role: "user", content: prompt }));
             setValue("");
 
-            const payload = {
-                conversationId: conversation._id,
-                prompt,
-                agent: selectedAgent,
-            };
+            const formData = new FormData();
 
-            setSelectedFile(null)
+            formData.append("conversationId", conversation._id);
+            formData.append("prompt", prompt);
+            formData.append("agent", selectedAgent);
 
-            const data = await sendPrompt(payload);
+            if (selectedFile) {
+                formData.append("file", selectedFile);
+            }
+
+            const data = await sendPrompt(formData);
+
+            setSelectedFile(null);
+
             console.log(data)
             dispatch(
                 addMessage({

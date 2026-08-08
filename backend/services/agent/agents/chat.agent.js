@@ -3,22 +3,63 @@ import {
   HumanMessage,
   SystemMessage,
 } from "@langchain/core/messages";
-import { getModel } from "../utils/llmModel.js";
+// import { getMemory } from "../utils/memory.js";
+// import { getModel } from "../utils/model.js";
+// import { checkAgentLimit } from "../config/agentRateLimit.js";
+import { deductCredits } from "../utils/deductCredit.js";
 import { getMemory } from "../utils/memory.js";
+import { getModel } from "../utils/llmModel.js";
+export const chatAgent = async (state) => {
+  // await checkAgentLimit(state.userId, "chat");
 
-export const chatAgent = async (params) => {
+  // Validate userId before attempting to deduct credits
+  if (!state?.userId) {
+    const missingErr = new Error("Missing userId in agent state");
+    missingErr.status = 400;
+    missingErr.data = {
+      success: false,
+      title: "Missing User",
+      message: "userId is required in the agent state",
+    };
+    throw missingErr;
+  }
+
   try {
-    const llm = await getModel("chat");
-    const state = params;
+    await deductCredits(state.userId, "chat");
+  } catch (err) {
+    // Log useful context for debugging and rethrow so upstream handlers see the original error
+    console.error(
+      "Failed deducting credits for user",
+      state.userId,
+      err?.data || err?.message || err,
+    );
+    throw err;
+  }
 
-    const history = await getMemory(state.conversationId);
-    const searchContext = state.searchresults
-      ? `web Seach Results: ${state.searchresults} Answer the user using the above search results.`
-      : "";
+  const llm = getModel("chat");
 
-    const messages = [
-      new SystemMessage(`You are CodexAI, an intelligent AI assistant. ${searchContext}
-      If searchContext exists:
+  const history = await getMemory(state.conversationId);
+
+  const searchContext = state.searchResults
+    ? `
+Web Search Results:
+
+${state.searchResults}
+
+Answer the user using only the above search results.
+`
+    : "";
+
+  const messages = [
+    new SystemMessage(
+      `
+You are CortexAI, an intelligent AI assistant.
+
+${searchContext}
+
+
+
+If searchContext exists:
 
 - Use search results to answer.
 - Do not mention internal tools.
@@ -39,36 +80,32 @@ Formatting:
 - Never write headings and content on the same line.
 - Never generate large walls of text.
 
-`),
-    ];
 
-    if (Array.isArray(history)) {
-      history.forEach((msg) => {
-        if (msg.role === "user") {
-          messages.push(new HumanMessage(msg.content));
-        }
 
-        if (msg.role === "assistant") {
-          messages.push(new AIMessage(msg.content));
-        }
-      });
+
+`,
+    ),
+  ];
+
+  history.forEach((msg) => {
+    if (msg.role === "user") {
+      messages.push(new HumanMessage(msg.content));
     }
 
-    messages.push(new HumanMessage(state.prompt));
-    const response = await llm.invoke(messages);
+    if (msg.role === "assistant") {
+      messages.push(new AIMessage(msg.content));
+    }
+  });
 
-    return {
-      ...state,
-      aiResponse:
-        typeof response?.content === "string"
-          ? response.content
-          : String(response ?? ""),
-    };
-  } catch (error) {
-    console.error("chatAgent error", error);
-    return {
-      ...params,
-      aiResponse: error.message || "AI generation failed",
-    };
-  }
+  messages.push(new HumanMessage(state.prompt));
+
+  const response = await llm.invoke(messages);
+
+  const images = state.searchResults?.images || [];
+  return {
+    ...state,
+
+    response: response.content,
+    images: images,
+  };
 };

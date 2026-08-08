@@ -1,9 +1,8 @@
 import express from "express";
-import multer from "multer";
-import { agent } from "../controllers/agent.controller.js";
+import multer from "../config/multer.js";
+import { chat } from "../controllers/agent.controller.js";
 
-const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
-router.post("/chat", upload.single("file"), agent);
+router.post("/chat", multer.single("file"), chat);
 export default router;

@@ -11,7 +11,6 @@ export default function BillingDrawer({
     onClose
 })
 {
-
     const { userData } = useSelector(state => state.user)
     const handleUpgrade = async (plan) =>
     {
@@ -68,8 +67,12 @@ export default function BillingDrawer({
 
             };
 
-            const razorpay =
-                new window.Razorpay(options);
+            const Razorpay = window.Razorpay;
+            if (!Razorpay) {
+                throw new Error("Razorpay checkout script not loaded");
+            }
+
+            const razorpay = new Razorpay(options);
 
             razorpay.open();
 

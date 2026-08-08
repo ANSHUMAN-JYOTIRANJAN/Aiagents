@@ -1,5 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
+import helmet from "helmet";
+import morgan from "morgan";
 import proxy from "express-http-proxy";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -11,7 +13,7 @@ const PORT = process.env.PORT || 9000;
 const AUTH_SERVICE = process.env.AUTH_SERVICE || "http://localhost:9001";
 const CHAT_SERVICE = process.env.CHAT_SERVICE || "http://localhost:9002";
 const AGENT_SERVICE = process.env.AGENT_SERVICE || "http://localhost:9003";
-
+const BILLING_SERVICE = process.env.BILLING_SERVICE || "http://localhost:9004";
 const app = express();
 
 app.use(
@@ -20,8 +22,9 @@ app.use(
     credentials: true,
   }),
 );
+app.use(helmet());
+app.use(morgan("dev"));
 app.use(cookieParser());
-
 app.use(
   "/api/auth",
   proxy(AUTH_SERVICE, {
@@ -36,6 +39,7 @@ app.use(
 );
 app.use("/api/chat", protect, proxyWithHeader(CHAT_SERVICE));
 app.use("/api/agent", protect, proxyWithHeader(AGENT_SERVICE));
+app.use("/api/billing", protect, proxyWithHeader(BILLING_SERVICE));
 app.get("/", (req, res) => {
   res.json({ message: "Hello World from gateway" });
 });

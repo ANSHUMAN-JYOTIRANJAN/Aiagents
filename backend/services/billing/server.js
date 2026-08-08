@@ -13,6 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(helmet());
 app.use(morgan("dev"));
+app.use("/", router);
 
 // app.get("/", (req, res) => {
 //   res.json({ message: "Hello from Anshuman" });

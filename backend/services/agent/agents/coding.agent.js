@@ -1,5 +1,6 @@
 import { getModel } from "../utils/llmModel.js";
-export const codingAgent = async (params) => {
+import { deductCredits } from "../utils/deductCredit.js";
+export const codingAgent = async (state) => {
   function cleanCode(code = "") {
     return code
       .replace(/```[\w-]*\n?/g, "")
@@ -8,7 +9,7 @@ export const codingAgent = async (params) => {
   }
 
   try {
-    const state = params || {};
+    await deductCredits(state.userId, "coding");
     const promptText = typeof state.prompt === "string" ? state.prompt : "";
     const llm = await getModel("coding");
 
@@ -243,14 +244,13 @@ ${promptText}`);
       });
     } else {
       let fileName = "main.js";
-
       const prompt = promptText.toLowerCase();
 
       if (prompt.includes("html")) {
         fileName = "index.html";
       } else if (prompt.includes("css")) {
         fileName = "style.css";
-      } else if (prompt.includes("javaScript")) {
+      } else if (prompt.includes("javascript")) {
         fileName = "server.js";
       } else if (prompt.includes("python")) {
         fileName = "main.py";
@@ -259,6 +259,11 @@ ${promptText}`);
       } else if (prompt.includes("c++")) {
         fileName = "main.cpp";
       }
+
+      files.push({
+        name: fileName,
+        content: cleanCode(content),
+      });
     }
 
     if (!content.includes("FILE:")) {
@@ -268,7 +273,6 @@ ${promptText}`);
         artifacts: [],
       };
     }
-
     return {
       ...state,
       aiResponse: "Code generated successfully.",
@@ -286,7 +290,7 @@ ${promptText}`);
   } catch (error) {
     console.error("codingAgent error", error);
     return {
-      ...(params || {}),
+      ...state,
       aiResponse: error.message || "AI generation failed",
       response: error.message || "AI generation failed",
       artifacts: [],

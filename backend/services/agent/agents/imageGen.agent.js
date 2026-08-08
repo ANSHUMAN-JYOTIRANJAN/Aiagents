@@ -2,9 +2,10 @@ import axios from "axios";
 import { getModel } from "../utils/llmModel.js";
 import { uploadToS3 } from "../utils/uploadToS3.js";
 import { getDownloadUrl } from "../utils/getDownloadUrl.js";
-
+import { deductCredits } from "../utils/deductCredit.js";
 export const imageGenAgent = async (state) => {
   try {
+    await deductCredits(state.userId, "image");
     const llm = await getModel("image");
     const promptResponse = await llm.invoke(`
 

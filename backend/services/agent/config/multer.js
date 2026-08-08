@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 
 const uploadDir = path.resolve("./pdf");
+// console.log(uploadDir);
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, {
     recursive: true,
@@ -11,7 +12,7 @@ if (!fs.existsSync(uploadDir)) {
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, upload);
+    cb(null, uploadDir);
   },
 
   filename(req, file, cb) {
